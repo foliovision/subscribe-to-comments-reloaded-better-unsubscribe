@@ -28,7 +28,7 @@ This plugin unsubscribes the person right away from the post for which the notif
 
 Just install the plugin using Wordpress admin dashboard, or upload the ZIP file.
 
-We recommend that you test the plugin. It
+We recommend that you test the plugin. Here are detailed steps:
 
 * after Subscribe to Comments Reloaded was installed activate this plugin
 * comment and subscribe to some post as a non-logged in visitor
