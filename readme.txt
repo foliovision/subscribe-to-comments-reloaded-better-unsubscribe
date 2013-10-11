@@ -48,6 +48,8 @@ Please read the installation steps.
 
 1. Here's what the commenter's new comment notification should look like
 
+2. Here's the instant unsubscribe in action
+
 == Changelog ==
 
 = 0.9.1 =
