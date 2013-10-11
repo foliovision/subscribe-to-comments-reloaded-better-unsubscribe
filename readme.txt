@@ -50,6 +50,10 @@ Please read the installation steps.
 
 == Changelog ==
 
+= 0.9.1 =
+
+* Bugfix - better checking of what links in emails get adjusted
+
 = 0.9 = 
 
 * Initial release
