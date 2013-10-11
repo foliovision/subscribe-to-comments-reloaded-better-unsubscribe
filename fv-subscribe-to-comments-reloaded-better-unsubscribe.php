@@ -1,8 +1,4 @@
 <?php
-/**
- * @package FV_Subscribe_to_Comments_Reloaded_-_quick_unsubscribe
- * @version 0.1
- */
 /*
 Plugin Name: Subscribe to Comments Reloaded Better Unsubscribe
 Plugin URI: http://foliovision.com/wordpress/plugins/subscribe-to-comments-reloaded-better-unsubscribe/
