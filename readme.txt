@@ -52,6 +52,11 @@ Please read the installation steps.
 
 == Changelog ==
 
+= 0.9.2 =
+
+* Bugfix - post ID was sometimes not properly obtained, resulting in no unsubscribe action
+* Bugfix - the subscription is now only suspended, rather than being suspended and unconfirmed at the same time. That makes it easier to re-subscribe.
+
 = 0.9.1 =
 
 * Bugfix - better checking of what links in emails get adjusted
