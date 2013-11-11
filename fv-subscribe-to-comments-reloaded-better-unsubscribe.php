@@ -46,8 +46,8 @@ function FV_STCR_UnsubscribeLink( $array ) {
   $isValidEmail = FV_STCR_checkEmail( $array['message'] );
   if( $isValidEmail ) {
     $array['message'] = FV_STCR_changeEmail( $array['message'] );
+    $array['message'] .= "\n\nThis notification was sent to {$array['to']}.";
   }
-
   return $array;
 }
 

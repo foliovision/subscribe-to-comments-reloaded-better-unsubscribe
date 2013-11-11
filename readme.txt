@@ -52,6 +52,10 @@ Please read the installation steps.
 
 == Changelog ==
 
+= 0.9.3 =
+
+* Improvement - "This notification was sent to {email}." text added at the end of notification email.
+
 = 0.9.2 =
 
 * Bugfix - post ID was sometimes not properly obtained, resulting in no unsubscribe action
