@@ -54,7 +54,7 @@ Please read the installation steps.
 
 = 0.9.3 =
 
-* Improvement - "This notification was sent to {email}." text added at the end of notification email.
+* Improvement - "This notification was sent to {email}." text added at the end of notification email. It's handy if you get spam reports for your comment notifications. Some mail servers hide the "from" address, so you don't know who reported your notification as a spam and you can't unsubscribe him.
 
 = 0.9.2 =
 
