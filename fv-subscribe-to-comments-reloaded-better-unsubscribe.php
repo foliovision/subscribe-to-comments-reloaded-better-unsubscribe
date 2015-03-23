@@ -114,6 +114,7 @@ add_action('init', 'FV_STCR_Unsubscribe');
 add_filter('wp_mail', 'FV_STCR_UnsubscribeLink');
 add_filter('plugin_action_links', 'fv_subscribe_to_comments_reloaded_better_unsubscribe_plugin_action_links', 10, 2);
 
+
 function fv_subscribe_to_comments_reloaded_better_unsubscribe_plugin_action_links($links, $file) {
   	$plugin_file = basename(__FILE__);
   	if (basename($file) == $plugin_file) {
@@ -122,6 +123,120 @@ function fv_subscribe_to_comments_reloaded_better_unsubscribe_plugin_action_link
   	}
   	return $links;
 }
+
+// cron and it's functions start here
+
+add_filter('cron_schedules','FV_STCR_cron_schedules');
+
+
+function FV_STCR_cron_schedules($schedules){
+  
+  /*$schedules['5minutes'] = array(
+    'interval' => 300,
+    'display' => __('Every 5 minutes')
+  );*/
+  
+  $schedules['60minutes'] = array(
+    'interval' => 3600,
+    'display' => __('Every hour')
+  );
+  
+  return $schedules;
+}
+
+
+register_deactivation_hook(__FILE__, 'FV_STCR_sharing_deactivation');
+
+
+function FV_STCR_sharing_deactivation(){
+  wp_clear_scheduled_hook('FV_STCR_sharing_cron_event');
+}
+
+
+add_action('FV_STCR_sharing_cron_event','FV_STCR_sharing_cron');
+
+function FV_STCR_check_sendgrid_options(){
+  
+  $options = array(
+    'password' => '',
+    'email' => ''
+  );
+  
+  $password = get_option('smtp_pass');
+  $email = get_option('smtp_user');
+  
+  if($password == '' || $email == ''){
+    
+    global $mailer;
+    $password = $mailer->options['smtp_pass'];
+    $email = $mailer->options['smtp_user'];
+    
+  }
+  
+  if($password == '' || $email == ''){
+    return false;
+  }else{
+    $options['password'] = $password;
+    $options['email'] = $email;
+  }
+  
+  return $options;
+  
+}
+
+
+function FV_STCR_sharing_cron(){
+  
+  if(FV_STCR_check_sendgrid_options() != false){
+    
+    $options = FV_STCR_check_sendgrid_options();
+    $password = $options['password'];
+    $email = $options['email'];
+    
+    
+    $json = file_get_contents('https://sendgrid.com/api/bounces.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
+    $result = json_decode($json);
+    
+    $json = file_get_contents('https://sendgrid.com/api/invalidemails.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
+    $result2 = json_decode($json);
+    
+    $json = file_get_contents('https://sendgrid.com/api/spamreports.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
+    $result3 = json_decode($json);
+    
+    $json = file_get_contents('https://sendgrid.com/api/unsubscribes.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
+    $result4 = json_decode($json);
+    
+    $all_users = array_merge($result,$result2,$result3,$result4);
+    
+    global $wpdb;
+    
+    foreach($all_users as $user){
+      $sql = "SELECT post_id,meta_value FROM {$wpdb->prefix}postmeta WHERE meta_key ='_stcr@_$user->email' ";
+      $results = $wpdb->get_results( $sql);
+      
+      foreach($results as $result){
+	
+	if( strpos($result->meta_value, "|Y") !== false && strpos($result->meta_value, "|YC") == false ) {
+	  $unsubValue = str_replace('|Y', '|YC', $result->meta_value);
+	  update_post_meta($result->post_id,"_stcr@_$user->email",$unsubValue);
+	}
+	
+      }
+      
+    }
+    
+  }  
+  
+}
+
+
+if (is_admin()){
+  if ( !wp_next_scheduled( 'FV_STCR_sharing_cron_event' ) ) {
+    wp_schedule_event( time(), '5minutes', 'FV_STCR_sharing_cron_event' );
+  }
+}
+
+// cron and it's functions end here
 
 
 ?>
