@@ -126,15 +126,17 @@ function fv_subscribe_to_comments_reloaded_better_unsubscribe_plugin_action_link
 
 // cron and it's functions start here
 
+// no needed
+/*
 add_filter('cron_schedules','FV_STCR_cron_schedules');
 
 
 function FV_STCR_cron_schedules($schedules){
   
-  /*$schedules['5minutes'] = array(
+  $schedules['5minutes'] = array(
     'interval' => 300,
     'display' => __('Every 5 minutes')
-  );*/
+  );
   
   $schedules['60minutes'] = array(
     'interval' => 3600,
@@ -143,6 +145,7 @@ function FV_STCR_cron_schedules($schedules){
   
   return $schedules;
 }
+*/
 
 
 register_deactivation_hook(__FILE__, 'FV_STCR_sharing_deactivation');
@@ -164,12 +167,13 @@ function FV_STCR_check_sendgrid_options(){
   
   $password = get_option('smtp_pass');
   $email = get_option('smtp_user');
-  
   if($password == '' || $email == ''){
     
     global $mailer;
-    $password = $mailer->options['smtp_pass'];
-    $email = $mailer->options['smtp_user'];
+    if((isset($mailer->options['smtp_pass'])) && (isset($mailer->options['smtp_user']))){
+      $password = $mailer->options['smtp_pass'];
+      $email = $mailer->options['smtp_user'];
+    }
     
   }
   
@@ -179,7 +183,6 @@ function FV_STCR_check_sendgrid_options(){
     $options['password'] = $password;
     $options['email'] = $email;
   }
-  
   return $options;
   
 }
@@ -188,53 +191,65 @@ function FV_STCR_check_sendgrid_options(){
 function FV_STCR_sharing_cron(){
   
   if(FV_STCR_check_sendgrid_options() != false){
-    
     $options = FV_STCR_check_sendgrid_options();
     $password = $options['password'];
     $email = $options['email'];
     
     
-    $json = file_get_contents('https://sendgrid.com/api/bounces.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
-    $result = json_decode($json);
+    $json = @file_get_contents('https://sendgrid.com/api/bounces.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
+    $result = @json_decode($json);
     
-    $json = file_get_contents('https://sendgrid.com/api/invalidemails.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
-    $result2 = json_decode($json);
+    $json = @file_get_contents('https://sendgrid.com/api/invalidemails.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
+    $result2 = @json_decode($json);
     
-    $json = file_get_contents('https://sendgrid.com/api/spamreports.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
-    $result3 = json_decode($json);
+    $json = @file_get_contents('https://sendgrid.com/api/spamreports.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
+    $result3 = @json_decode($json);
     
-    $json = file_get_contents('https://sendgrid.com/api/unsubscribes.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
-    $result4 = json_decode($json);
+    $json = @file_get_contents('https://sendgrid.com/api/unsubscribes.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
+    $result4 = @json_decode($json);
     
-    $all_users = array_merge($result,$result2,$result3,$result4);
+    if($result != NULL){
     
-    global $wpdb;
-    
-    foreach($all_users as $user){
-      $sql = "SELECT post_id,meta_value FROM {$wpdb->prefix}postmeta WHERE meta_key ='_stcr@_$user->email' ";
-      $results = $wpdb->get_results( $sql);
+      $all_users = array_merge($result,$result2,$result3,$result4);
       
-      foreach($results as $result){
+      global $wpdb;
+      
+      foreach($all_users as $user){
+	$sql = "SELECT post_id,meta_value FROM {$wpdb->prefix}postmeta WHERE meta_key ='_stcr@_$user->email' ";
+	$results = $wpdb->get_results( $sql);
 	
-	if( strpos($result->meta_value, "|Y") !== false && strpos($result->meta_value, "|YC") == false ) {
-	  $unsubValue = str_replace('|Y', '|YC', $result->meta_value);
-	  update_post_meta($result->post_id,"_stcr@_$user->email",$unsubValue);
+	foreach($results as $result){
+	  
+	  if( strpos($result->meta_value, "|Y") !== false && strpos($result->meta_value, "|YC") == false ) {
+	    $unsubValue = str_replace('|Y', '|YC', $result->meta_value);
+	    update_post_meta($result->post_id,"_stcr@_$user->email",$unsubValue);
+	  }
+	  
 	}
 	
       }
-      
     }
     
-  }  
-  
+  }
 }
-
 
 if (is_admin()){
   if ( !wp_next_scheduled( 'FV_STCR_sharing_cron_event' ) ) {
-    wp_schedule_event( time(), '5minutes', 'FV_STCR_sharing_cron_event' );
+    wp_schedule_event( time(), 'hourly', 'FV_STCR_sharing_cron_event' );
   }
 }
+
+function FV_STCR_smtp_options_notice(){
+  if($_GET['page']=='subscribe-to-comments-reloaded/options/index.php'){
+    if(FV_STCR_check_sendgrid_options()){
+      echo '<div class="updated"><p> Subscribe to Comments Reloaded Better Unsubscribe found that you are using SendGrid. It will automatically unsubscribe addresses which are reported at bounces.  </p></div>';
+    }else{
+      echo '<div class="error fade"><p> Subscribe to Comments Reloaded Better Unsubscribe can be set to process SendGrid bounces to prevent spam reports. Just use WP Mail STMP or Mailer plugin with your SendGrid login details and will make sure bounced email addresses are unsubscribed.  </p></div>';
+    }
+  }
+}
+
+add_action('admin_notices','FV_STCR_smtp_options_notice');
 
 // cron and it's functions end here
 
