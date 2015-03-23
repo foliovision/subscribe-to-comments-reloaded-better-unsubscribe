@@ -191,6 +191,7 @@ function FV_STCR_check_sendgrid_options(){
 function FV_STCR_sharing_cron(){
   
   if(FV_STCR_check_sendgrid_options() != false){
+    
     $options = FV_STCR_check_sendgrid_options();
     $password = $options['password'];
     $email = $options['email'];
@@ -208,8 +209,9 @@ function FV_STCR_sharing_cron(){
     $json = @file_get_contents('https://sendgrid.com/api/unsubscribes.get.json?api_user='.$email.'&api_key='.$password.'&type=hard');
     $result4 = @json_decode($json);
     
-    if($result != NULL){
-    
+    if($result != NULL ){
+      
+      $iCount = 0;
       $all_users = array_merge($result,$result2,$result3,$result4);
       
       global $wpdb;
@@ -221,6 +223,7 @@ function FV_STCR_sharing_cron(){
 	foreach($results as $result){
 	  
 	  if( strpos($result->meta_value, "|Y") !== false && strpos($result->meta_value, "|YC") == false ) {
+	    $iCount++;
 	    $unsubValue = str_replace('|Y', '|YC', $result->meta_value);
 	    update_post_meta($result->post_id,"_stcr@_$user->email",$unsubValue);
 	  }
@@ -228,6 +231,13 @@ function FV_STCR_sharing_cron(){
 	}
 	
       }
+      
+      if($iCount > 0){
+      update_option( 'stcrbe_last_run', time() );
+      update_option( 'stcrbe_unsubscribed', $iCount );
+      }
+      
+      
     }
     
   }
