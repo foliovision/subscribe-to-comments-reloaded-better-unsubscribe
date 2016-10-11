@@ -2,9 +2,9 @@
 /*
 Plugin Name: Subscribe to Comments Reloaded Better Unsubscribe
 Plugin URI: http://foliovision.com/wordpress/plugins/subscribe-to-comments-reloaded-better-unsubscribe/
-Description: Enhancement for Subscribe to Comments Reloaded - unsubscribe from comment notifications using a single click
+Description: This plugin is obsolete. For comment subscriptions we recommend <a href="http://www.satollo.net/plugins/comment-plus">Comment Plus</a> plugin. If you are interested in migration of your subscribers from Subscribe to Comments Reloaded into <a href="http://www.satollo.net/plugins/comment-plus">Comment Plus</a> please <a href="https://foliovision.com/about/contact">contact us</a>.
 Author: Foliovision
-Version: 0.9.7
+Version: 0.9.8
 Author URI: http://foliovision.com/
 */
 

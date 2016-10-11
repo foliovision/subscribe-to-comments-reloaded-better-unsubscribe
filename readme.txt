@@ -12,6 +12,7 @@ Unsubscribing from comment notifications is not quick and easy enough in Subscri
 
 == Description ==
 
+
 Subscribe to Comments Reloaded is a powerful plugin which allows users to subscribe to new comments on your blog posts. However if a person want to unsubscribe, they have to click the "Manage your subscriptions" link in the notification email. That opens a custom subscription management page on your blog, where they have to select the posts they wish to be unsubscribed from, then select the "Action" (Delete, Suspend, etc.) and then click "Update".
 
 What should be quick and easy is a multi-step process.
@@ -54,6 +55,9 @@ Please read the installation steps.
 2. Here's the instant unsubscribe in action
 
 == Changelog ==
+
+= 0.9.8 =
+
 
 = 0.9.7 =
 
