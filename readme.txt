@@ -12,6 +12,7 @@ Unsubscribing from comment notifications is not quick and easy enough in Subscri
 
 == Description ==
 
+**This plugin is obsolete. For comment subscriptions we recommend [Comment Plus](http://www.satollo.net/plugins/comment-plus) plugin. If you are interested in migration of your subscribers from Subscribe to Comments Reloaded into [Comment Plus](http://www.satollo.net/plugins/comment-plus) please [contact us](https://foliovision.com/about/contact).**
 
 Subscribe to Comments Reloaded is a powerful plugin which allows users to subscribe to new comments on your blog posts. However if a person want to unsubscribe, they have to click the "Manage your subscriptions" link in the notification email. That opens a custom subscription management page on your blog, where they have to select the posts they wish to be unsubscribed from, then select the "Action" (Delete, Suspend, etc.) and then click "Update".
 
@@ -58,6 +59,7 @@ Please read the installation steps.
 
 = 0.9.8 =
 
+* **This plugin is obsolete. For comment subscriptions we recommend [Comment Plus](http://www.satollo.net/plugins/comment-plus) plugin. If you are interested in migration of your subscribers from Subscribe to Comments Reloaded into [Comment Plus](http://www.satollo.net/plugins/comment-plus) please [contact us](https://foliovision.com/about/contact).**
 
 = 0.9.7 =
 
